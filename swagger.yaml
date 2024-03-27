@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: User Profile Management API
+  description: RESTful API for managing user profiles
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/profile/{userId}:
+    get:
+      summary: Retrieve user profile by ID
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: ID of the user whose profile to retrieve
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '404':
+          description: User profile not found
+
+
+  /api/profile:
+    get:
+      summary: Retrieve all user profiles
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+    put:
+      summary: Update user profile visibility
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visibility:
+                  type: string
+                  enum: [ PUBLIC, PRIVATE ]
+      responses:
+        '200':
+          description: Profile visibility updated successfully
+
+
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the profile
+        userId:
+          type: string
+          description: User ID associated with the profile
+        bio:
+          type: string
+          description: User biography
+        visibility:
+          type: string
+          enum: [ PUBLIC, PRIVATE ]
+          description: Profile visibility setting
+        role:
+          type: string
+          enum: [ ADMIN, NORMAL ]
+          description: User role
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT token obtained from authentication
